@@ -1,0 +1,19 @@
+<!-- Footer-->
+<footer class="bg-white py-4 mt-auto">
+  <div class="container px-5">
+    <div class="row align-items-center justify-content-between flex-column flex-sm-row">
+      <div class="col-auto">
+        <div class="small m-0">
+        Copyright &copy; Personal <%= Time.now.year %>
+        </div>
+      </div>
+      <div class="col-auto">
+        <%= link_to 'Privacy', privacy_path, class: 'small' %>
+        <span class="mx-1">&middot;</span>
+        <%= link_to 'Terms', terms_path, class: 'small' %>
+        <span class="mx-1">&middot;</span>
+        <%= link_to 'Contact', contact_path, class: 'small' %>
+      </div>
+    </div>
+  </div>
+</footer>
