@@ -1,0 +1,39 @@
+<!-- Page content-->
+<section class="py-5">
+    <div class="container px-5">
+        <!-- Contact form-->
+        <div class="bg-light rounded-4 py-5 px-4 px-md-5">
+            <div class="text-center mb-5">
+                <div class="feature bg-primary bg-gradient-primary-to-secondary text-white rounded-3 mb-3"><i class="bi bi-envelope"></i></div>
+                <h1 class="fw-bolder">Messages</h1>
+            </div>
+            <div class="row gx-5 justify-content-center">
+                <!-- <div class="col-lg-8 col-xl-6"> -->
+                <div>
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <th scope="col">Date</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Email</th>
+                        <th scope="col">Phone</th>
+                        <th scope="col">Message</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <% @messages.each do |message| %>
+                        <tr>
+                          <th><%= message.created_at.strftime("%d/%m/%Y") %></th>
+                          <td><%= link_to message.full_name, message %></td>
+                          <td><%= mail_to message.email %></td>
+                          <td><%= message.phone %></td>
+                          <td><%= truncate(message.body, length: 40) %></td>
+                        </tr>
+                      <% end %>
+                    </tbody>
+                  </table>                    
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

@@ -129,25 +129,153 @@ get 'privacy', to: 'static_pages#privacy'
 ```
 
 ## Add the dynamic content
+### For the projects page
+- projects; name, body, image
+- rails g scaffold Project name body:text
+- rails active_storage:install
+- rails db:migrate
+- add gem: gem 'active_storage_validations'
+- stop the server
+- in terminal: bundle
+- restart the server
+- add image to model
+- add validations to model
+```
+
+class Project < ApplicationRecord
+  validates :name, presence: true, length: {minimum: 3}
+  validates :body, length: { minimum: 1, maximum: 280 }
+  has_one_attached :image
+
+  validates :image, attached: true, 
+                    content_type: [:png, :jpg, :jpeg]
+
+end
+```
+- update the projects controller params
+```
+    def project_params
+      params.require(:project).permit(:name, :body, :image)
+    end
+```
+- update the form like the contact form styles
+- update projects/new and edit files
+- update the projects/index
+- update the projects/project partial
+- update the routes
+```
+  resources :projects, except: :show
+  # get 'projects', to: 'static_pages#projects'
+```
+- update the projects controller index action
+```
+  def index
+    @projects = Project.order(created_at: :desc)
+  end
+```
+- update the projects controller create action
+```
+  def create
+    @project = Project.new(project_params)
+
+    respond_to do |format|
+      if @project.save
+        format.html { redirect_to projects_url, notice: "Project was successfully created." }
+        format.json { render :show, status: :created, location: @project }
+      else
+        format.html { render :new, status: :unprocessable_entity }
+        format.json { render json: @project.errors, status: :unprocessable_entity }
+      end
+    end
+  end
+```
+- go to projects/new and create a project with an image
+- test the validations
+
 ### For the contact page
 - create a messages form, 
-- and add a thank you page
+- rails g scaffold Message full_name email phone body:text
+- rails db:migrate
+- add validations
+```
+class Message < ApplicationRecord
+  validates :full_name, presence: true, length: {minimum: 3}
+  validates :email, presence: true, format: { with: /\A[^@\s]+@[^@\s]+\z/, message: "must be a valid email address" }  
+  validates :phone, presence: true
+  validates :body, length: { minimum: 1, maximum: 280 }
+end
+```
+- update the contact.html.erb with the form partial
+- update the messages/form partial with the bootstrap classes
+- update the static pages controller contact action
+```
+  def contact
+    @message = Message.new
+  end
+```
+- update the messages controller create action
+```
+  def create
+    @message = Message.new(message_params)
+
+    respond_to do |format|
+      if @message.save
+        format.html {redirect_to thankyou_path }
+        # format.html { redirect_to message_url(@message), notice: "Message was successfully created." }
+        format.json { render :show, status: :created, location: @message }
+      else
+        format.html { render 'static_pages/contact', status: :unprocessable_entity }
+        # format.html { render :new, status: :unprocessable_entity }
+        format.json { render json: @message.errors, status: :unprocessable_entity }
+      end
+    end
+  end
+```
+- adding a thank you page
+- update the routes file
+```
+get 'thankyou', to: 'static_pages#thankyou'
+```
+- create the static_pages/thankyou.html.erb file
+- refresh the contact page, and send a message
+- to see the messages go to:
+```
+http://localhost:3000/messages
+```
+- update the messages/index with a table
+- update the messages controller index action
+```
+  def index
+    @messages = Message.order(created_at: :desc)
+  end
+```
+- update the links with mail_to and link to show page
+- update the show page with a card for the message 
+- add mail_to and tel links
+
+### For the resume page
+- resume; 
+- experience start_year, end_year, title, company, city_state, description
+- rails g scaffold Experience start_year:integer end_year:integer title company city_state description:text
+- update the resume page, the experiences section
+- update the experiences/experience partial
+- update the static pages controller, resume action
+```
+  def resume
+    @experiences = Experience.order(start_year: :desc)
+  end
+```
+- add validations
+- downloadable file
+- education; dates, school, city_state, degree, course
+- skills; skill (separate slice_each from mack child)
+- languages; name (separate slice_each from mack child)
 
 ### For the home page
 - header content; design, dev etc, title, subtitle
 - footer content; title
 - about me; name, body, socials (no cocoon, simple)
 - call to action, in projects
-
-### For the resume page
-- downloadable file
-- resume; dates, title, company, city_state, description
-- education; dates, school, city_state, degree, course
-- skills; skill (separate slice_each from mack child)
-- languages; name (separate slice_each from mack child)
-
-### For the projects page
-- projects; name, body, image
 
 ### For the privacy page
 - site_setting; privacy policy
